@@ -1,42 +1,42 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Carousel from '@/components/Carousel';
-import { useFavorites } from '@/hooks/useFavorites';
-import { Movie } from '@/types/movie';
+import { useState } from 'react'
+import Carousel from '@/components/Carousel'
+import { useFavorites } from '@/hooks/useFavorites'
+import { Movie } from '@/types/movie'
 
 interface MovieCarouselClientProps {
-  initialMovies: Movie[];
+  initialMovies: Movie[]
 }
 
 export default function MovieCarouselClient({
   initialMovies,
 }: MovieCarouselClientProps) {
-  const [movies, setMovies] = useState<Movie[]>(initialMovies);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [movies, setMovies] = useState<Movie[]>(initialMovies)
+  const [isGenerating, setIsGenerating] = useState(false)
   const {
     favorites,
     favoriteIds,
     toggleFavorite,
     clearAllFavorites,
     isLoaded,
-  } = useFavorites();
+  } = useFavorites()
 
   const handleGenerateNew = async () => {
-    setIsGenerating(true);
+    setIsGenerating(true)
     try {
-      const response = await fetch('/api/movies/generate');
+      const response = await fetch('/api/movies/generate')
       if (!response.ok) {
-        throw new Error('Failed to generate movies');
+        throw new Error('Failed to generate movies')
       }
-      const data = await response.json();
-      setMovies(data.movies);
+      const data = await response.json()
+      setMovies(data.movies)
     } catch (error) {
-      console.error('Error generating new movies:', error);
+      console.error('Error generating new movies:', error)
     } finally {
-      setIsGenerating(false);
+      setIsGenerating(false)
     }
-  };
+  }
 
   if (!isLoaded) {
     return (
@@ -48,7 +48,7 @@ export default function MovieCarouselClient({
           </p>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -116,5 +116,5 @@ export default function MovieCarouselClient({
         }
       />
     </>
-  );
+  )
 }

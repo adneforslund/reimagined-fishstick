@@ -1,16 +1,16 @@
-'use client';
+'use client'
 
-import { Movie } from '@/types/movie';
-import { useRef, useState, useEffect, ReactNode } from 'react';
-import MovieCard from './MovieCard';
+import { Movie } from '@/types/movie'
+import { useRef, useState, useEffect, ReactNode } from 'react'
+import MovieCard from './MovieCard'
 
 interface CarouselProps {
-  title: string;
-  movies: Movie[];
-  onToggleFavorite?: (movie: Movie) => void;
-  favoriteIds?: Set<string>;
-  emptyMessage?: string;
-  actions?: ReactNode;
+  title: string
+  movies: Movie[]
+  onToggleFavorite?: (movie: Movie) => void
+  favoriteIds?: Set<string>
+  emptyMessage?: string
+  actions?: ReactNode
 }
 
 export default function Carousel({
@@ -21,93 +21,93 @@ export default function Carousel({
   emptyMessage = 'No movies to display',
   actions,
 }: CarouselProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-  const [showLeftButton, setShowLeftButton] = useState(false);
-  const [showRightButton, setShowRightButton] = useState(true);
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [isDragging, setIsDragging] = useState(false)
+  const [startX, setStartX] = useState(0)
+  const [scrollLeft, setScrollLeft] = useState(0)
+  const [showLeftButton, setShowLeftButton] = useState(false)
+  const [showRightButton, setShowRightButton] = useState(true)
 
   // Handle scroll button visibility
   const updateScrollButtons = () => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
+    const container = scrollContainerRef.current
+    if (!container) return
 
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    setShowLeftButton(scrollLeft > 0);
-    setShowRightButton(scrollLeft < scrollWidth - clientWidth - 10);
-  };
+    const { scrollLeft, scrollWidth, clientWidth } = container
+    setShowLeftButton(scrollLeft > 0)
+    setShowRightButton(scrollLeft < scrollWidth - clientWidth - 10)
+  }
 
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
+    const container = scrollContainerRef.current
+    if (!container) return
 
-    updateScrollButtons();
-    container.addEventListener('scroll', updateScrollButtons);
-    window.addEventListener('resize', updateScrollButtons);
+    updateScrollButtons()
+    container.addEventListener('scroll', updateScrollButtons)
+    window.addEventListener('resize', updateScrollButtons)
 
     return () => {
-      container.removeEventListener('scroll', updateScrollButtons);
-      window.removeEventListener('resize', updateScrollButtons);
-    };
-  }, [movies]);
+      container.removeEventListener('scroll', updateScrollButtons)
+      window.removeEventListener('resize', updateScrollButtons)
+    }
+  }, [movies])
 
   // Mouse drag handlers
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!scrollContainerRef.current) return;
-    setIsDragging(true);
-    setStartX(e.pageX - scrollContainerRef.current.offsetLeft);
-    setScrollLeft(scrollContainerRef.current.scrollLeft);
-    scrollContainerRef.current.style.cursor = 'grabbing';
-  };
+    if (!scrollContainerRef.current) return
+    setIsDragging(true)
+    setStartX(e.pageX - scrollContainerRef.current.offsetLeft)
+    setScrollLeft(scrollContainerRef.current.scrollLeft)
+    scrollContainerRef.current.style.cursor = 'grabbing'
+  }
 
   const handleMouseLeave = () => {
-    setIsDragging(false);
+    setIsDragging(false)
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.cursor = 'grab';
+      scrollContainerRef.current.style.cursor = 'grab'
     }
-  };
+  }
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    setIsDragging(false)
     if (scrollContainerRef.current) {
-      scrollContainerRef.current.style.cursor = 'grab';
+      scrollContainerRef.current.style.cursor = 'grab'
     }
-  };
+  }
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !scrollContainerRef.current) return;
-    e.preventDefault();
-    const x = e.pageX - scrollContainerRef.current.offsetLeft;
-    const walk = (x - startX) * 2; // Scroll speed multiplier
-    scrollContainerRef.current.scrollLeft = scrollLeft - walk;
-  };
+    if (!isDragging || !scrollContainerRef.current) return
+    e.preventDefault()
+    const x = e.pageX - scrollContainerRef.current.offsetLeft
+    const walk = (x - startX) * 2 // Scroll speed multiplier
+    scrollContainerRef.current.scrollLeft = scrollLeft - walk
+  }
 
   // Scroll button handlers
   const scroll = (direction: 'left' | 'right') => {
-    if (!scrollContainerRef.current) return;
-    const scrollAmount = 400;
+    if (!scrollContainerRef.current) return
+    const scrollAmount = 400
     const newScrollLeft =
       direction === 'left'
         ? scrollContainerRef.current.scrollLeft - scrollAmount
-        : scrollContainerRef.current.scrollLeft + scrollAmount;
+        : scrollContainerRef.current.scrollLeft + scrollAmount
 
     scrollContainerRef.current.scrollTo({
       left: newScrollLeft,
       behavior: 'smooth',
-    });
-  };
+    })
+  }
 
   // Keyboard navigation
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      scroll('left');
+      e.preventDefault()
+      scroll('left')
     } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      scroll('right');
+      e.preventDefault()
+      scroll('right')
     }
-  };
+  }
 
   if (movies.length === 0) {
     return (
@@ -115,19 +115,19 @@ export default function Carousel({
         <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <h2
             id={`${title}-heading`}
-            className="text-xl font-bold text-zinc-900 dark:text-white md:text-2xl"
+            className="text-xl font-bold text-zinc-900 md:text-2xl dark:text-white"
           >
             {title}
           </h2>
           {actions}
         </div>
         <div className="flex h-75 items-center justify-center rounded-lg border-2 border-dashed border-zinc-300 dark:border-zinc-700">
-          <p className="px-4 text-center text-sm text-zinc-500 dark:text-zinc-400 md:text-base">
+          <p className="px-4 text-center text-sm text-zinc-500 md:text-base dark:text-zinc-400">
             {emptyMessage}
           </p>
         </div>
       </section>
-    );
+    )
   }
 
   return (
@@ -135,7 +135,7 @@ export default function Carousel({
       <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <h2
           id={`${title}-heading`}
-          className="text-xl font-bold text-zinc-900 dark:text-white md:text-2xl"
+          className="text-xl font-bold text-zinc-900 md:text-2xl dark:text-white"
         >
           {title}
         </h2>
@@ -221,5 +221,5 @@ export default function Carousel({
         }
       `}</style>
     </section>
-  );
+  )
 }

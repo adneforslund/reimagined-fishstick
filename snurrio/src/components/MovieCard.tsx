@@ -1,13 +1,13 @@
-'use client';
+'use client'
 
-import { Movie } from '@/types/movie';
-import Image from 'next/image';
-import { useState } from 'react';
+import { Movie } from '@/types/movie'
+import Image from 'next/image'
+import { useState } from 'react'
 
 interface MovieCardProps {
-  movie: Movie;
-  onToggleFavorite?: (movie: Movie) => void;
-  isFavorite?: boolean;
+  movie: Movie
+  onToggleFavorite?: (movie: Movie) => void
+  isFavorite?: boolean
 }
 
 export default function MovieCard({
@@ -15,8 +15,8 @@ export default function MovieCard({
   onToggleFavorite,
   isFavorite = false,
 }: MovieCardProps) {
-  const [imageError, setImageError] = useState(false);
-  const hasPoster = movie.Poster !== 'N/A' && !imageError;
+  const [imageError, setImageError] = useState(false)
+  const hasPoster = movie.Poster !== 'N/A' && !imageError
 
   return (
     <div
@@ -82,5 +82,5 @@ export default function MovieCard({
         )}
       </div>
     </div>
-  );
+  )
 }
