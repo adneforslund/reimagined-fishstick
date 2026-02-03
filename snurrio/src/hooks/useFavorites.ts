@@ -1,66 +1,66 @@
-'use client';
+'use client'
 
-import { Movie } from '@/types/movie';
-import { useState, useEffect } from 'react';
+import { Movie } from '@/types/movie'
+import { useState, useEffect } from 'react'
 
-const FAVORITES_KEY = 'movie-favorites';
+const FAVORITES_KEY = 'movie-favorites'
 
 export function useFavorites() {
-  const [favorites, setFavorites] = useState<Movie[]>([]);
-  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [favorites, setFavorites] = useState<Movie[]>([])
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set())
+  const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(FAVORITES_KEY);
+      const stored = localStorage.getItem(FAVORITES_KEY)
       if (stored) {
-        const parsedFavorites: Movie[] = JSON.parse(stored);
-        setFavorites(parsedFavorites);
-        setFavoriteIds(new Set(parsedFavorites.map((m) => m.imdbID)));
+        const parsedFavorites: Movie[] = JSON.parse(stored)
+        setFavorites(parsedFavorites)
+        setFavoriteIds(new Set(parsedFavorites.map((m) => m.imdbID)))
       }
     } catch (error) {
-      console.error('Error loading favorites from localStorage:', error);
+      console.error('Error loading favorites from localStorage:', error)
     } finally {
-      setIsLoaded(true);
+      setIsLoaded(true)
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     if (isLoaded) {
       try {
-        localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+        localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites))
       } catch (error) {
-        console.error('Error saving favorites to localStorage:', error);
+        console.error('Error saving favorites to localStorage:', error)
       }
     }
-  }, [favorites, isLoaded]);
+  }, [favorites, isLoaded])
 
   const toggleFavorite = (movie: Movie) => {
     setFavorites((prev) => {
-      const exists = prev.some((m) => m.imdbID === movie.imdbID);
+      const exists = prev.some((m) => m.imdbID === movie.imdbID)
 
       if (exists) {
         // Remove from favorites
-        const updated = prev.filter((m) => m.imdbID !== movie.imdbID);
-        setFavoriteIds(new Set(updated.map((m) => m.imdbID)));
-        return updated;
+        const updated = prev.filter((m) => m.imdbID !== movie.imdbID)
+        setFavoriteIds(new Set(updated.map((m) => m.imdbID)))
+        return updated
       } else {
         // Add to favorites
-        const updated = [...prev, movie];
-        setFavoriteIds(new Set(updated.map((m) => m.imdbID)));
-        return updated;
+        const updated = [...prev, movie]
+        setFavoriteIds(new Set(updated.map((m) => m.imdbID)))
+        return updated
       }
-    });
-  };
+    })
+  }
 
   const clearAllFavorites = () => {
-    setFavorites([]);
-    setFavoriteIds(new Set());
-  };
+    setFavorites([])
+    setFavoriteIds(new Set())
+  }
 
   const isFavorite = (movieId: string): boolean => {
-    return favoriteIds.has(movieId);
-  };
+    return favoriteIds.has(movieId)
+  }
 
   return {
     favorites,
@@ -69,5 +69,5 @@ export function useFavorites() {
     clearAllFavorites,
     isFavorite,
     isLoaded,
-  };
+  }
 }
