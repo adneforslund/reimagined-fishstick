@@ -16,7 +16,7 @@ export default async function Home() {
         </p>
       </header>
 
-      <main>
+      <main id="main-content">
         <MovieCarouselClient initialMovies={initialMovies} />
       </main>
     </div>

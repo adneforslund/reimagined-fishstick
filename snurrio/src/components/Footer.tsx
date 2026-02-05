@@ -11,6 +11,7 @@ export default function Footer() {
             className="underline hover:text-zinc-900 dark:hover:text-zinc-200"
           >
             OMDb API
+            <span className="sr-only"> (opens in new tab)</span>
           </a>
         </p>
       </div>

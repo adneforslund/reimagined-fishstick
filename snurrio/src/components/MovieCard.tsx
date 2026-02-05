@@ -8,21 +8,25 @@ interface MovieCardProps {
   movie: Movie
   onToggleFavorite?: (movie: Movie) => void
   isFavorite?: boolean
+  isFocused?: boolean
 }
 
 export default function MovieCard({
   movie,
   onToggleFavorite,
   isFavorite = false,
+  isFocused = false,
 }: MovieCardProps) {
   const [imageError, setImageError] = useState(false)
   const hasPoster = movie.Poster !== 'N/A' && !imageError
 
   return (
     <div
-      className="group relative w-40 shrink-0 transition-transform duration-300 focus-within:scale-105 hover:scale-105 sm:w-48 md:w-50"
+      className={`group relative w-40 shrink-0 transition-transform duration-300 focus-within:scale-105 hover:scale-105 sm:w-48 md:w-50 rounded-lg motion-reduce:transition-none ${
+        isFocused ? 'scale-105 ring-2 ring-white ring-offset-2 ring-offset-zinc-900' : ''
+      }`}
       role="article"
-      aria-label={`${movie.Title} (${movie.Year})`}
+      aria-label={`${movie.Title} (${movie.Year})${isFavorite ? ' - In favorites' : ''}`}
     >
       <div className="relative aspect-2/3 overflow-hidden rounded-lg bg-zinc-800 shadow-lg">
         {hasPoster ? (
@@ -43,7 +47,7 @@ export default function MovieCard({
           </div>
         )}
 
-        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100">
+        <div className={`absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-100 transition-opacity duration-300 ${isFocused ? '' : 'md:opacity-0 md:group-hover:opacity-100'}`}>
           <div className="absolute right-0 bottom-0 left-0 p-3 md:p-4">
             <h3 className="mb-1 line-clamp-2 text-sm font-bold text-white md:text-sm">
               {movie.Title}
@@ -55,7 +59,8 @@ export default function MovieCard({
         {onToggleFavorite && (
           <button
             onClick={() => onToggleFavorite(movie)}
-            className="absolute top-2 right-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-100 transition-all duration-300 hover:scale-110 hover:bg-black/80 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none active:scale-95 active:bg-black/90 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100"
+            tabIndex={-1}
+            className={`absolute top-2 right-2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white opacity-100 transition-all duration-300 hover:scale-110 hover:bg-black/80 focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent focus:outline-none active:scale-95 active:bg-black/90 ${isFocused ? '' : 'md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100'}`}
             aria-label={
               isFavorite
                 ? `Remove ${movie.Title} from favorites`

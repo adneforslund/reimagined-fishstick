@@ -27,6 +27,7 @@ export default function Carousel({
   const [scrollLeft, setScrollLeft] = useState(0)
   const [showLeftButton, setShowLeftButton] = useState(false)
   const [showRightButton, setShowRightButton] = useState(true)
+  const [focusedIndex, setFocusedIndex] = useState(-1)
 
   // Handle scroll button visibility
   const updateScrollButtons = () => {
@@ -92,9 +93,26 @@ export default function Carousel({
         ? scrollContainerRef.current.scrollLeft - scrollAmount
         : scrollContainerRef.current.scrollLeft + scrollAmount
 
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     scrollContainerRef.current.scrollTo({
       left: newScrollLeft,
-      behavior: 'smooth',
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    })
+  }
+
+  // Scroll a specific movie into view
+  const scrollToIndex = (index: number) => {
+    const container = scrollContainerRef.current
+    if (!container) return
+    const items = container.querySelectorAll('[role="listitem"]')
+    const item = items[index] as HTMLElement
+    if (!item) return
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    item.scrollIntoView({
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      block: 'nearest',
+      inline: 'center',
     })
   }
 
@@ -102,10 +120,31 @@ export default function Carousel({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
       e.preventDefault()
-      scroll('left')
+      const newIndex = focusedIndex <= 0 ? movies.length - 1 : focusedIndex - 1
+      setFocusedIndex(newIndex)
+      scrollToIndex(newIndex)
     } else if (e.key === 'ArrowRight') {
       e.preventDefault()
-      scroll('right')
+      const newIndex = focusedIndex >= movies.length - 1 ? 0 : focusedIndex + 1
+      setFocusedIndex(newIndex)
+      scrollToIndex(newIndex)
+    } else if ((e.key === 'Enter' || e.key === ' ') && focusedIndex >= 0 && onToggleFavorite) {
+      e.preventDefault()
+      onToggleFavorite(movies[focusedIndex])
+    }
+  }
+
+  // Reset focus when carousel loses focus
+  const handleBlur = (e: React.FocusEvent) => {
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      setFocusedIndex(-1)
+    }
+  }
+
+  // Set initial focus index when carousel gains focus
+  const handleFocus = () => {
+    if (focusedIndex === -1 && movies.length > 0) {
+      setFocusedIndex(0)
     }
   }
 
@@ -146,7 +185,7 @@ export default function Carousel({
         {showLeftButton && (
           <button
             onClick={() => scroll('left')}
-            className="absolute top-1/2 left-0 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white opacity-0 transition-all duration-300 group-hover/carousel:opacity-100 hover:scale-110 hover:bg-black/90 focus:opacity-100 focus:ring-2 focus:ring-white focus:outline-none"
+            className="absolute top-1/2 left-0 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-60 transition-all duration-300 group-hover/carousel:opacity-100 hover:scale-110 hover:bg-black/90 focus:opacity-100 focus:ring-2 focus:ring-white focus:outline-none motion-reduce:transition-none"
             aria-label="Scroll left"
           >
             <svg
@@ -167,26 +206,34 @@ export default function Carousel({
 
         <div
           ref={scrollContainerRef}
-          className="scrollbar-hide flex cursor-grab gap-4 overflow-x-auto pb-4 active:cursor-grabbing"
+          className="scrollbar-hide flex cursor-grab gap-4 overflow-x-auto pb-4 active:cursor-grabbing rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 dark:focus:ring-white"
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
           onMouseMove={handleMouseMove}
           onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           tabIndex={0}
           role="list"
-          aria-label={`${title} carousel`}
+          aria-label={`${title} carousel. Use arrow keys to navigate, Enter or Space to toggle favorite.`}
+          aria-activedescendant={focusedIndex >= 0 ? `${title}-movie-${focusedIndex}` : undefined}
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
           }}
         >
-          {movies.map((movie) => (
-            <div key={movie.imdbID} role="listitem">
+          {movies.map((movie, index) => (
+            <div
+              key={movie.imdbID}
+              role="listitem"
+              id={`${title}-movie-${index}`}
+            >
               <MovieCard
                 movie={movie}
                 onToggleFavorite={onToggleFavorite}
                 isFavorite={favoriteIds.has(movie.imdbID)}
+                isFocused={focusedIndex === index}
               />
             </div>
           ))}
@@ -195,7 +242,7 @@ export default function Carousel({
         {showRightButton && (
           <button
             onClick={() => scroll('right')}
-            className="absolute top-1/2 right-0 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/70 text-white opacity-0 transition-all duration-300 group-hover/carousel:opacity-100 hover:scale-110 hover:bg-black/90 focus:opacity-100 focus:ring-2 focus:ring-white focus:outline-none"
+            className="absolute top-1/2 right-0 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-60 transition-all duration-300 group-hover/carousel:opacity-100 hover:scale-110 hover:bg-black/90 focus:opacity-100 focus:ring-2 focus:ring-white focus:outline-none motion-reduce:transition-none"
             aria-label="Scroll right"
           >
             <svg

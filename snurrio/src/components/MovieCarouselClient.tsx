@@ -14,6 +14,7 @@ export default function MovieCarouselClient({
 }: MovieCarouselClientProps) {
   const [movies, setMovies] = useState<Movie[]>(initialMovies)
   const [isGenerating, setIsGenerating] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const {
     favorites,
     favoriteIds,
@@ -24,6 +25,7 @@ export default function MovieCarouselClient({
 
   const handleGenerateNew = async () => {
     setIsGenerating(true)
+    setError(null)
     try {
       const response = await fetch('/api/movies/generate')
       if (!response.ok) {
@@ -33,6 +35,7 @@ export default function MovieCarouselClient({
       setMovies(data.movies)
     } catch (error) {
       console.error('Error generating new movies:', error)
+      setError('Failed to load movies. Please try again.')
     } finally {
       setIsGenerating(false)
     }
@@ -40,9 +43,9 @@ export default function MovieCarouselClient({
 
   if (!isLoaded) {
     return (
-      <div className="flex min-h-100 items-center justify-center">
+      <div className="flex min-h-100 items-center justify-center" role="status" aria-live="polite">
         <div className="text-center">
-          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-zinc-900 border-r-transparent dark:border-white dark:border-r-transparent"></div>
+          <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-zinc-900 border-r-transparent motion-reduce:animate-none dark:border-white dark:border-r-transparent"></div>
           <p className="mt-4 text-lg text-zinc-700 dark:text-zinc-300">
             Loading favorites...
           </p>
@@ -53,6 +56,14 @@ export default function MovieCarouselClient({
 
   return (
     <>
+      {error && (
+        <div
+          role="alert"
+          className="mb-4 rounded-lg bg-red-100 p-4 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+        >
+          {error}
+        </div>
+      )}
       <Carousel
         title="Movies"
         movies={movies}
@@ -62,8 +73,9 @@ export default function MovieCarouselClient({
           <button
             onClick={handleGenerateNew}
             disabled={isGenerating}
-            className="min-h-11 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 focus:outline-none active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus:ring-white"
+            className="min-h-11 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-700 focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 focus:outline-none active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200 dark:focus:ring-white"
             aria-label="Generate new random movies"
+            aria-busy={isGenerating}
           >
             {isGenerating ? (
               <span className="flex items-center gap-2">
@@ -91,7 +103,7 @@ export default function MovieCarouselClient({
                 Generating...
               </span>
             ) : (
-              'Generate New'
+              'Generate new list'
             )}
           </button>
         }
@@ -107,10 +119,10 @@ export default function MovieCarouselClient({
           favorites.length > 0 ? (
             <button
               onClick={clearAllFavorites}
-              className="min-h-11 rounded-lg border-2 border-red-600 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-600 hover:text-white focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:outline-none active:scale-95 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-500 dark:hover:text-white"
+              className="min-h-11 rounded-lg border-2 border-white bg-red-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-600 hover:text-white focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:outline-none active:scale-95"
               aria-label="Clear all favorites"
             >
-              Clear All
+              Clear my favs
             </button>
           ) : null
         }
