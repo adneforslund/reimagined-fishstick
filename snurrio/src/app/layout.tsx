@@ -66,8 +66,10 @@ export default function RootLayout({
           Skip to main content
         </a>
         <div className="min-h-screen">
-          {children}
-          <Footer />
+          <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+            {children}
+            <Footer />
+          </div>
         </div>
       </body>
     </html>

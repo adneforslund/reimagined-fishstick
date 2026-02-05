@@ -6,7 +6,7 @@ export default async function Home() {
   const initialMovies = await fetchRandomMovies(20)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <>
       <header className="mb-8 md:mb-12">
         <h1 className="mb-2 text-3xl font-bold text-zinc-900 md:text-4xl dark:text-white">
           Movie Carousel
@@ -19,6 +19,6 @@ export default async function Home() {
       <main id="main-content">
         <MovieCarouselClient initialMovies={initialMovies} />
       </main>
-    </div>
+    </>
   )
 }
