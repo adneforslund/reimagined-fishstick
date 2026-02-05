@@ -35,7 +35,12 @@ interface FavoriteButtonProps {
   onToggle: (movie: Movie) => void
 }
 
-function FavoriteButton({ movie, isFavorite, isFocused, onToggle }: FavoriteButtonProps) {
+function FavoriteButton({
+  movie,
+  isFavorite,
+  isFocused,
+  onToggle,
+}: FavoriteButtonProps) {
   return (
     <button
       onClick={() => onToggle(movie)}
@@ -70,7 +75,6 @@ function MoviePoster({ movie, hasPoster, onImageError }: MoviePosterProps) {
         className="object-cover transition-opacity duration-300 group-hover:opacity-80"
         onError={onImageError}
         priority={false}
-        placeholder="blur"
       />
     )
   }
