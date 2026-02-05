@@ -21,7 +21,7 @@ app.get('/api/movies/generate', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch movies' })
   }
 })
-
+//http://localhost:3001/api/movies/tt0111161
 // GET /api/movies/:id - Fetch a movie by OMDb ID
 app.get('/api/movies/:id', async (req, res) => {
   try {
