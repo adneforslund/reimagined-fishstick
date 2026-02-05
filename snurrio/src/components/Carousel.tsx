@@ -150,7 +150,7 @@ export default function Carousel({
 
   if (movies.length === 0) {
     return (
-      <section className="mb-8 md:mb-12" aria-labelledby={`${title}-heading`}>
+      <section className="py-6 md:py-10" aria-labelledby={`${title}-heading`}>
         <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <h2
             id={`${title}-heading`}
@@ -170,7 +170,7 @@ export default function Carousel({
   }
 
   return (
-    <section className="mb-8 md:mb-12" aria-labelledby={`${title}-heading`}>
+    <section className="py-6 md:py-10" aria-labelledby={`${title}-heading`}>
       <div className="mb-4 flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
         <h2
           id={`${title}-heading`}
@@ -206,7 +206,7 @@ export default function Carousel({
 
         <div
           ref={scrollContainerRef}
-          className="scrollbar-hide flex cursor-grab gap-4 overflow-x-auto pb-4 active:cursor-grabbing rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 dark:focus:ring-white"
+          className="scrollbar-hide flex cursor-grab gap-4 overflow-x-auto py-4 active:cursor-grabbing rounded-lg focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2 dark:focus:ring-white"
           onMouseDown={handleMouseDown}
           onMouseLeave={handleMouseLeave}
           onMouseUp={handleMouseUp}
