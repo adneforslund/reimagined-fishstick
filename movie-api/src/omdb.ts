@@ -71,6 +71,34 @@ export async function fetchRandomMovies(count: number = 20): Promise<Movie[]> {
   return movies
 }
 
+export async function fetchMovieById(imdbId: string): Promise<Movie | null> {
+  const apiKey = getApiKey()
+  if (!apiKey) {
+    console.warn('OMDb API key not found')
+    return null
+  }
+
+  try {
+    const url = `${BASE_URL}?apikey=${apiKey}&i=${encodeURIComponent(imdbId)}`
+    const response = await fetch(url)
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const data = await response.json() as Movie & { Response: string }
+
+    if (data.Response === 'True') {
+      return data
+    }
+
+    return null
+  } catch (error) {
+    console.error(`Error fetching movie with ID "${imdbId}":`, error)
+    return null
+  }
+}
+
 export function hasApiKey(): boolean {
   return !!getApiKey()
 }
