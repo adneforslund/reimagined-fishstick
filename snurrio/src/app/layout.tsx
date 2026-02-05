@@ -50,7 +50,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+        <div className="min-h-screen">
           {children}
           <Footer />
         </div>
