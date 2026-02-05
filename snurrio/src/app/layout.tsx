@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://example.com'),
+  metadataBase: new URL('https://reimagined-fishstick-ten.vercel.app/'),
   title: 'Movie Carousel - Browse and Save Your Favorite Movies',
   description:
     'Discover movies with an interactive carousel interface. Browse through curated collections, save your favorites, and explore new films. Built with Next.js and OMDb API.',
